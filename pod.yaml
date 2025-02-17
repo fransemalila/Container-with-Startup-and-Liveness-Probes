@@ -1,0 +1,21 @@
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-with-startup-check
+spec:
+  containers:
+  - image: quay.io/wildfly/wildfly
+    name: wildfly
+    startupProbe:
+      exec:
+        command: [ "stat", "/opt/jboss/wildfly/standalone/tmp/startup-marker" ]
+      initialDelaySeconds: 60
+      periodSeconds: 60
+      failureThreshold: 15
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: 9990
+      periodSeconds: 10
+      failureThreshold: 3
